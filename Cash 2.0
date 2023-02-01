@@ -1,0 +1,36 @@
+local Holder = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local TextLabel = Instance.new("TextLabel", Holder)
+TextLabel.Size = UDim2.new(0, 75, 0, 50)
+
+local Drops = Workspace.Ignored.Drop
+
+local TotalAmount = 0
+
+for i,v in next, Drops:GetChildren() do
+    if v.Name == "MoneyDrop" then
+        local Money = string.gsub(v.BillboardGui.TextLabel.Text, "%D", "")
+
+        TotalAmount = TotalAmount + Money
+    end
+end
+
+Drops.ChildAdded:Connect(function (Child)
+    if Child.Name == "MoneyDrop" then
+        local Object = Child:WaitForChild("BillboardGui"):WaitForChild("TextLabel")
+        local Money = string.gsub(Object.Text, "%D", "")
+
+        TotalAmount = TotalAmount + Money
+    end
+end)
+
+Drops.ChildRemoved:Connect(function (Child)
+    if Child.Name == "MoneyDrop" then
+        local Money = string.gsub(Child.BillboardGui.TextLabel.Text, "%D", "Levs and Dull’s Cash Counter")
+
+        TotalAmount = TotalAmount - Money
+    end
+end)
+
+game:GetService("RunService").Heartbeat:Connect(function ()
+    TextLabel.Text = tostring(TotalAmount)
+end)
